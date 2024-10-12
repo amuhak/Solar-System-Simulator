@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
+#include <iomanip>
 #include <span>
 #include <vector>
 
@@ -48,7 +49,8 @@ void iterate_simulation(std::vector<CelestialObject> &celestial_objects, double 
             (celestial_objects[0].coordinates - celestial_objects[3].coordinates).norm()) {
             eclipse_type = "Lunar";
         }
-        eclipse_dates.emplace_back(eclipse_type + " Eclipse on: " + std::to_string(current_time));
+        std::cout << "Eclipse detected at: " << current_time << std::endl;
+        eclipse_dates.push_back(eclipse_type + " Eclipse on: " + std::to_string(current_time));
     }
     std::vector<vec3<double> > body_cumulative_acceleration(celestial_objects.size(), {0, 0, 0});
     std::vector<std::tuple<int, vec3<double>, int, vec3<double> > > body_accelerations;
@@ -87,7 +89,9 @@ int main() {
         }
     }
 
-        for (int count = 0; count < ticks; ++count) {
+    std::cout << std::setprecision(10);
+
+    for (int count = 0; count < ticks; ++count) {
         iterate_simulation(celestial_objects, ticks_per_second);
         double percent_finished = (count + 1.) / ticks * 100;
         std::cout << "\rProgress: " << percent_finished << "%";
