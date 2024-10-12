@@ -47,8 +47,7 @@ public:
     }
 
     T norm() {
-        std::cout << x * x + y * y + z * z << std::endl;
-        std::sqrt(std::abs(x * x + y * y + z * z));
+        return std::sqrt(std::abs(x * x + y * y + z * z));
     }
 
     vec3<T> &operator/=(T norm) {
@@ -81,19 +80,19 @@ public:
     double radius; // radius (meters)
     std::string name; // name of the object
     // Constructor
-    constexpr CelestialObject(double x, double y, double z, double vx, double vy, double vz, double m, double r,
-                              std::string n) : mass(m), radius(r), name(n) {
+    CelestialObject(double x, double y, double z, double vx, double vy, double vz, double m, double r,
+                    std::string n) : mass(m), radius(r), name(n) {
         coordinates = {x, y, z};
         velocity = {vx, vy, vz};
     }
 
     // Apply acceleration
-    constexpr void applyAcceleration(vec3<double> otherV, double time) {
+    void applyAcceleration(vec3<double> otherV, double time) {
         velocity = velocity + otherV / time;
     }
 
     // Apply velocity to update coordinates
-    constexpr void applyVelocity(double time) {
+    void applyVelocity(double time) {
         coordinates = velocity / time;
     }
 };

@@ -65,27 +65,7 @@ void iterate_simulation(std::vector<CelestialObject> &celestial_objects, double 
         celestial_objects[i].applyAcceleration(body_cumulative_acceleration[i], tps);
         celestial_objects[i].applyVelocity(tps);
     }
-    /*
-     *
-    *     # Barycenter section:
-    total_mass = 0
-    barycenter = np.array([0.0, 0.0, 0.0])
-    # Iterate over each celestial object
-    for obj in celestial_objects:
-        mass, coordinates = obj.return_mass(), obj.return_coordinates()
-        total_mass += mass
-        x, y, z = coordinates
-        barycenter[0] += mass * x
-        barycenter[1] += mass * y
-        barycenter[2] += mass * z
-    # Calculate the barycenter coordinates
-    barycenter[0] /= total_mass
-    barycenter[1] /= total_mass
-    barycenter[2] /= total_mass
-    for obj in celestial_objects:
-        obj.set_coordinates(round_array(np.subtract(obj.return_coordinates(), barycenter), 4))
-        obj.set_velocity(round_array(obj.return_velocity(), 4))
-     */
+
     double total_mass = 0;
     vec3<double> barycenter = {0, 0, 0};
     for (auto &obj: celestial_objects) {
@@ -101,14 +81,13 @@ void iterate_simulation(std::vector<CelestialObject> &celestial_objects, double 
 }
 
 int main() {
-    std::cout << sol << std::endl;
     for (int i = 0; i < celestial_objects.size(); ++i) {
         for (int j = i + 1; j < celestial_objects.size(); ++j) {
             celestial_object_pairs.emplace_back(i, j);
         }
     }
 
-    for (int count = 0; count < ticks; ++count) {
+        for (int count = 0; count < ticks; ++count) {
         iterate_simulation(celestial_objects, ticks_per_second);
         double percent_finished = (count + 1.) / ticks * 100;
         std::cout << "\rProgress: " << percent_finished << "%";
