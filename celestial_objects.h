@@ -122,6 +122,6 @@ inline constexpr CelestialObject neptunus = CelestialObject(
     "Neptune"
 );
 
-constexpr std::array<CelestialObject, 10> celestial_objects = {
+std::vector<CelestialObject> celestial_objects = {
     sol, mercurius, venus, terra, luna, mars, iuppiter, saturnus, uranus, neptunus
 };

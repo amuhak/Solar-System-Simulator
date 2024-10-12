@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
+#include <span>
 #include <vector>
 
 #include "celestial_objects.h"
@@ -10,11 +11,97 @@ constexpr u_int32_t ending_time_UNIX = 2020291200;
 constexpr double ticks_per_second = 1. / 1600;
 constexpr u_int32_t ticks = (ending_time_UNIX - starting_time_UNIX) * ticks_per_second;
 std::vector<std::string> eclipse_dates;
+double current_time = starting_time_UNIX;
+std::vector<std::pair<int, int> > celestial_object_pairs;
+
+
+std::pair<vec3<double>, vec3<double> > calculate_acceleration(CelestialObject &body_one, CelestialObject &body_two) {
+    vec3<double> direction_vector = body_two.coordinates - body_one.coordinates;
+    double distance = direction_vector.norm();
+    double force_magnitude = 6.67430E-11 * body_one.mass * body_two.mass / (distance * distance);
+    vec3<double> force_vector = direction_vector / distance * force_magnitude;
+    vec3<double> body_one_acceleration = force_vector / body_one.mass;
+    vec3<double> body_two_acceleration = (force_vector * -1) / body_two.mass;
+    return {body_one_acceleration, body_two_acceleration};
+}
+
+
+std::tuple<int, vec3<double>, int, vec3<double> > calculate_acceleration_for_pair(int a, int b) {
+    CelestialObject body_one = celestial_objects[a];
+    CelestialObject body_two = celestial_objects[b];
+    auto [body_one_acceleration, body_two_acceleration] = calculate_acceleration(body_one, body_two);
+    return {a, body_one_acceleration, b, body_two_acceleration};
+}
+
+void iterate_simulation(std::vector<CelestialObject> &celestial_objects, double tps) {
+    vec3<double> direction_vector = celestial_objects[3].coordinates - celestial_objects[0].coordinates;
+    direction_vector /= direction_vector.norm();
+    int alignment_threshold = 1000;
+    vec3<double> sol_to_luna_vector = celestial_objects[4].coordinates - celestial_objects[0].coordinates;
+    double perpendicular_distance = (sol_to_luna_vector.cross(direction_vector)).norm();
+    bool is_aligned = perpendicular_distance <= alignment_threshold + celestial_objects[4].radius + celestial_objects[3]
+                      .radius;
+
+    if (is_aligned) {
+        std::string eclipse_type = "Solar";
+        if ((celestial_objects[0].coordinates - celestial_objects[4].coordinates).norm() >
+            (celestial_objects[0].coordinates - celestial_objects[3].coordinates).norm()) {
+            eclipse_type = "Lunar";
+        }
+        eclipse_dates.emplace_back(eclipse_type + " Eclipse on: " + std::to_string(current_time));
+    }
+    std::vector<vec3<double> > body_cumulative_acceleration(celestial_objects.size(), {0, 0, 0});
+    std::vector<std::tuple<int, vec3<double>, int, vec3<double> > > body_accelerations;
+    for (auto &pair: celestial_object_pairs) {
+        body_accelerations.push_back(calculate_acceleration_for_pair(pair.first, pair.second));
+    }
+
+    for (auto &[body_one_index, body_one_accel, body_two_index, body_two_acc]: body_accelerations) {
+        body_cumulative_acceleration[body_one_index] = body_cumulative_acceleration[body_one_index] + body_one_accel;
+        body_cumulative_acceleration[body_two_index] = body_cumulative_acceleration[body_two_index] + body_two_acc;
+    }
+
+    for (int i = 0; i < celestial_objects.size(); ++i) {
+        celestial_objects[i].applyAcceleration(body_cumulative_acceleration[i], tps);
+        celestial_objects[i].applyVelocity(tps);
+    }
+    /*
+     *
+    *     # Barycenter section:
+    total_mass = 0
+    barycenter = np.array([0.0, 0.0, 0.0])
+    # Iterate over each celestial object
+    for obj in celestial_objects:
+        mass, coordinates = obj.return_mass(), obj.return_coordinates()
+        total_mass += mass
+        x, y, z = coordinates
+        barycenter[0] += mass * x
+        barycenter[1] += mass * y
+        barycenter[2] += mass * z
+    # Calculate the barycenter coordinates
+    barycenter[0] /= total_mass
+    barycenter[1] /= total_mass
+    barycenter[2] /= total_mass
+    for obj in celestial_objects:
+        obj.set_coordinates(round_array(np.subtract(obj.return_coordinates(), barycenter), 4))
+        obj.set_velocity(round_array(obj.return_velocity(), 4))
+     */
+    double total_mass = 0;
+    vec3<double> barycenter = {0, 0, 0};
+    for (auto &obj: celestial_objects) {
+        double mass = obj.mass;
+        total_mass += mass;
+        barycenter = barycenter + obj.coordinates * mass;
+    }
+    barycenter = barycenter / total_mass;
+    for (auto &obj: celestial_objects) {
+        obj.coordinates = (obj.coordinates - barycenter).round(4);
+        obj.velocity = obj.velocity.round(4);
+    }
+}
 
 int main() {
-    double current_time = starting_time_UNIX;
     std::cout << sol << std::endl;
-    std::vector<std::pair<int, int> > celestial_object_pairs;
     for (int i = 0; i < celestial_objects.size(); ++i) {
         for (int j = i + 1; j < celestial_objects.size(); ++j) {
             celestial_object_pairs.emplace_back(i, j);
