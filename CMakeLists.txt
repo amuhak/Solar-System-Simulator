@@ -68,13 +68,10 @@ endif ()
 if (GPU STREQUAL "ON")
     add_executable(Solar_System_Simulator
             main.cu
-            celestial_object.cpp
     )
 else ()
     add_executable(Solar_System_Simulator
             main.cpp
-            celestial_object.cpp
-            celestial_objects.cpp
     )
 endif ()
 

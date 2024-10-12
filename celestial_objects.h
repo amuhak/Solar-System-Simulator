@@ -1,8 +1,9 @@
 #pragma once
+#include <array>
+
 #include "celestial_object.h"
 
-
-inline CelestialObject sol = CelestialObject(
+inline constexpr CelestialObject sol = CelestialObject(
     -1.191989241021022E+06 * 1000,
     -4.347653852987497E+05 * 1000,
     3.146124488303781E+04 * 1000,
@@ -14,7 +15,7 @@ inline CelestialObject sol = CelestialObject(
     "Sun"
 );
 
-inline CelestialObject mercurius = CelestialObject(
+inline constexpr CelestialObject mercurius = CelestialObject(
     -4.226941015560152E+07 * 1000,
     2.954546597148274E+07 * 1000,
     6.249265895718288E+06 * 1000,
@@ -26,7 +27,7 @@ inline CelestialObject mercurius = CelestialObject(
     "Mercury"
 );
 
-inline CelestialObject venus = CelestialObject(
+inline constexpr CelestialObject venus = CelestialObject(
     -1.081920113224358E+08 * 1000,
     -1.187776759100180E+07 * 1000,
     6.048297942710424E+06 * 1000,
@@ -37,7 +38,7 @@ inline CelestialObject venus = CelestialObject(
     6051.8 * 1000,
     "Venus"
 );
-inline CelestialObject terra = CelestialObject(
+inline constexpr CelestialObject terra = CelestialObject(
     -2.598836598098600E+07 * 1000,
     1.445626126553490E+08 * 1000,
     2.324549973998219E+04 * 1000,
@@ -49,7 +50,7 @@ inline CelestialObject terra = CelestialObject(
     "Earth"
 );
 
-inline CelestialObject luna = CelestialObject(
+inline constexpr CelestialObject luna = CelestialObject(
     -2.635609429981740E+07 * 1000,
     1.447295779421217E+08 * 1000,
     4.845187966158986E+04 * 1000,
@@ -61,7 +62,7 @@ inline CelestialObject luna = CelestialObject(
     "Moon (Earth)"
 );
 
-inline CelestialObject mars = CelestialObject(
+inline constexpr CelestialObject mars = CelestialObject(
     -4.509604630809999E+07 * 1000,
     -2.175176647934361E+08 * 1000,
     -3.441055388979807E+06 * 1000,
@@ -73,7 +74,7 @@ inline CelestialObject mars = CelestialObject(
     "Mars"
 );
 
-inline CelestialObject iuppiter = CelestialObject(
+inline constexpr CelestialObject iuppiter = CelestialObject(
     5.214023950207858E+08 * 1000,
     5.313678519725485E+08 * 1000,
     -1.386969717664611E+07 * 1000,
@@ -85,7 +86,7 @@ inline CelestialObject iuppiter = CelestialObject(
     "Jupiter"
 );
 
-inline CelestialObject saturnus = CelestialObject(
+inline constexpr CelestialObject saturnus = CelestialObject(
     1.344585933043946E+09 * 1000,
     -5.564074299488643E+08 * 1000,
     -4.385980505864763E+07 * 1000,
@@ -97,7 +98,7 @@ inline CelestialObject saturnus = CelestialObject(
     "Saturn"
 );
 
-inline CelestialObject uranus = CelestialObject(
+inline constexpr CelestialObject uranus = CelestialObject(
     1.834574778290128E+09 * 1000,
     2.288418091869818E+09 * 1000,
     -1.526801948375988E+07 * 1000,
@@ -109,7 +110,7 @@ inline CelestialObject uranus = CelestialObject(
     "Uranus"
 );
 
-inline CelestialObject neptunus = CelestialObject(
+inline constexpr CelestialObject neptunus = CelestialObject(
     4.463250326610554E+09 * 1000,
     -2.684320184407575E+08 * 1000,
     -9.733259894928326E+07 * 1000,
@@ -120,3 +121,7 @@ inline CelestialObject neptunus = CelestialObject(
     24624 * 1000,
     "Neptune"
 );
+
+constexpr std::array<CelestialObject, 10> celestial_objects = {
+    sol, mercurius, venus, terra, luna, mars, iuppiter, saturnus, uranus, neptunus
+};
