@@ -7,10 +7,10 @@
 
 #include "celestial_objects.h"
 
-constexpr u_int64_t starting_time_UNIX = 1704067200;
-constexpr u_int64_t ending_time_UNIX = 2020291200;
+constexpr uint64_t starting_time_UNIX = 1704067200;
+constexpr uint64_t ending_time_UNIX = 2020291200;
 constexpr long double ticks_per_second = 1. / 1600;
-constexpr u_int64_t ticks = (ending_time_UNIX - starting_time_UNIX) * ticks_per_second;
+constexpr uint64_t ticks = (ending_time_UNIX - starting_time_UNIX) * ticks_per_second;
 std::vector<std::string> eclipse_dates;
 long double current_time = starting_time_UNIX;
 std::vector<std::pair<int, int> > celestial_object_pairs;
