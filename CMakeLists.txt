@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.25)
 
 option(GPU "Enables gpu support" "OFF")
 option(TESTING "Switch to testing builds" "OFF")

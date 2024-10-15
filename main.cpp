@@ -1,8 +1,8 @@
 #include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <fstream>
 #include <iomanip>
-#include <span>
 #include <vector>
 
 #include "celestial_objects.h"
@@ -53,11 +53,12 @@ void iterate_simulation(long double tps) {
         eclipse_dates.push_back(eclipse_type + " Eclipse on: " + std::to_string(current_time));
     }
     std::vector<vec3<long double> > body_cumulative_acceleration(celestial_objects.size());
-    std::vector<std::tuple<int, vec3<long double>, int, vec3<long double> > > acceleration_results;
-    for (auto &pair: celestial_object_pairs) {
-        acceleration_results.push_back(calculate_acceleration_for_pair(pair.first, pair.second));
+    std::vector<std::tuple<int, vec3<long double>, int, vec3<long double> > > acceleration_results(
+        celestial_object_pairs.size());
+    for (int i = 0; i < celestial_object_pairs.size(); ++i) {
+        acceleration_results[i] = calculate_acceleration_for_pair(celestial_object_pairs[i].first,
+                                                                  celestial_object_pairs[i].second);
     }
-
     for (auto &[body_one_index, body_one_accel, body_two_index, body_two_acc]: acceleration_results) {
         body_cumulative_acceleration[body_one_index] = body_cumulative_acceleration[body_one_index] + body_one_accel;
         body_cumulative_acceleration[body_two_index] = body_cumulative_acceleration[body_two_index] + body_two_acc;
@@ -83,6 +84,8 @@ void iterate_simulation(long double tps) {
 }
 
 int main() {
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     for (int i = 0; i < celestial_objects.size(); ++i) {
         for (int j = i + 1; j < celestial_objects.size(); ++j) {
             celestial_object_pairs.emplace_back(i, j);
@@ -99,11 +102,17 @@ int main() {
         current_time += 1. / ticks_per_second;
     }
 
-    for (auto &i : eclipse_dates) {
+    for (auto &i: eclipse_dates) {
         std::cout << i << std::endl;
     }
 
     std::cout << "Final UNIX timestamp: " << current_time << std::endl;
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+
+    std::cout << "Elapsed time: " << elapsed_time.count() << "ms" << std::endl;
+
     std::ranges::sort(eclipse_dates);
     std::ofstream myfile;
     myfile.open("eclipses.txt");
