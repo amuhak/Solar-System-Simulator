@@ -95,7 +95,7 @@ int main() {
     std::cout << std::setprecision(20);
     for (int count = 0; count < ticks; ++count) {
         iterate_simulation(ticks_per_second);
-        if (count % 100 == 0) {
+        if (count % 1000 == 0) {
             long double percent_finished = (count + 1.) / ticks * 100;
             std::cout << "\rProgress: " << percent_finished << "%";
             std::cout << std::flush;
